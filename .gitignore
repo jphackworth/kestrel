@@ -2,7 +2,7 @@
 *.o
 *.a
 *.so
-
+zlarkd
 # Folders
 _obj
 _test
