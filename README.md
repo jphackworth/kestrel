@@ -19,7 +19,7 @@ Zlarkd is my attempt at option #4. I believe if we build simpler cjdns router im
 ## Known Issues/Limitations
 
 1. I'm writing Zlarkd in Golang. I have no experience with Golang prior to this project
-2. Cjdns is an encrypted network protocol. I have no experience implementing encrypted network protocols 
+2. Cjdns is an encrypted network protocol. I haven't implemented encrypted network protocols  
 2. Zlarkd is being written for Linux. Little effort will be made to make Zlarkd portable to non-x86 architectures, or operating systems other than Linux. If you need multiplatform support, stick with cjdroute. If you would like to help make zlarkd work on other platforms, please get in contact.
 
 ## FAQ
