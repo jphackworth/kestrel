@@ -35,3 +35,15 @@ Zlarkd is my attempt at option #4. I believe if we build simpler cjdns router im
 **Q: Why not work on cjdroute instead?**
 
 *A: I felt like learning Golang rather than adopting someone else's codebase*
+
+## For Developers
+
+If you want to test/hack on it in its current state:
+
+1. Install/setup Go: https://golang.org/doc/install
+2. go get github.com/jphackworth/zlarkd
+3. go build github.com/jphackworth/zlarkd
+4. go install github.com/jphackworth/zlarkd
+5. $GOPATH/bin/zlarkd
+
+NOTE: There's not much to see at the moment.
