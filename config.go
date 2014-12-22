@@ -20,7 +20,9 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/codegangsta/cli"
+	"io/ioutil"
 	"net"
+	"os"
 )
 
 type tomlConfig struct {
@@ -34,6 +36,9 @@ type serverInfo struct {
 	IPv6       string `toml:"ipv6"`
 }
 
+// getApp is used to configure the command-line defaults, arguments and flags of zlarkd
+//
+// It uses the cli package from https://github.com/codegangsta/cli
 func getApp() *cli.App {
 	app := cli.NewApp()
 	app.Name = "zlarkd"
@@ -48,12 +53,6 @@ func getApp() *cli.App {
 			Action: func(c *cli.Context) {
 				generateConfig()
 			},
-		}, {
-			Name:  "readconf",
-			Usage: "read a specified config",
-			Action: func(c *cli.Context) {
-				readConfig(c.String("config"))
-			},
 		},
 	}
 
@@ -65,13 +64,39 @@ func getApp() *cli.App {
 		},
 	}
 
+	app.Action = func(c *cli.Context) {
+
+		config := readConfigFile(c.String("config"))
+		start(config)
+		println("hi!")
+	}
 	return app
 }
 
-func readConfig(configPath string) {
+// Reads the zlarkd config file and decodes into tomlConfig
+func readConfigFile(configPath string) tomlConfig {
+	configData, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal error %s\n", err)
+		os.Exit(1)
+	}
+
+	var conf tomlConfig
+	_, err = toml.Decode(string(configData), &conf)
+	check(err)
+	return conf
+}
+
+// Checks that the config has the minimum info to start zlarkd:
+// - public key
+// - private key
+// - valid ipv6
+// - valid listen address
+func validateConfig(config tomlConfig) {
 
 }
 
+// Creates a new zlarkd config and prints to stdout
 func generateConfig() {
 	conf := tomlConfig{}
 	keys := generateKeys()
@@ -85,6 +110,12 @@ func generateConfig() {
 	fmt.Println(buf.String())
 }
 
+// Creates a local UDP IPv4 address host:port combination for zlarkd to use
+//
+// By default, set to listen on all IPv4 interfaces (0.0.0.0)
+// Will attempt to listen on a random high port temporarily and will assign this if successful.
+//
+// Returns a string in the format of "host:port", for example "0.0.0.0:30000"
 func generateListenAddress() (listenAddress string) {
 	addr, err := net.ResolveUDPAddr("udp4", "0.0.0.0:0")
 	check(err)
@@ -93,5 +124,4 @@ func generateListenAddress() (listenAddress string) {
 	listenAddress = conn.LocalAddr().String()
 	conn.Close()
 	return listenAddress
-
 }
