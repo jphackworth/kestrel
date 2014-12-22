@@ -19,11 +19,19 @@ import (
 	"os"
 )
 
+func start(config tomlConfig) {
+
+}
+
+func stop() {
+	os.Exit(0)
+}
+
 //ctrl-c interrupt code from http://adampresley.com/2014/12/15/handling-ctrl-c-in-go-command-line-applications.html
 func main() {
 
 	sigint.ListenForSIGINT(func() {
-		os.Exit(0)
+		stop()
 	})
 
 	app := getApp()
