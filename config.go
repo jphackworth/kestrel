@@ -26,11 +26,12 @@ import (
 )
 
 type tomlConfig struct {
-	Server serverInfo
+	Server serverConfig
 }
 
-type serverInfo struct {
+type serverConfig struct {
 	Listen     string `toml:"listen"`
+	Device     string `toml:"device"`
 	PublicKey  string `toml:"public_key"`
 	PrivateKey string `toml:"private_key"`
 	IPv6       string `toml:"ipv6"`
@@ -66,8 +67,8 @@ func getApp() *cli.App {
 
 	app.Action = func(c *cli.Context) {
 
-		config := readConfigFile(c.String("config"))
-		start(config)
+		//config := readConfigFile(c.String("config"))
+		start(c.String("config"))
 		println("hi!")
 	}
 	return app
@@ -104,6 +105,7 @@ func generateConfig() {
 	conf.Server.PublicKey = fmt.Sprintf("%s.k", base32Encode(keys.PublicKey[:])[:52])
 	conf.Server.PrivateKey = hex.EncodeToString(keys.PrivateKey[:])
 	conf.Server.Listen = generateListenAddress()
+	conf.Server.Device = "tun0"
 	buf := new(bytes.Buffer)
 	err := toml.NewEncoder(buf).Encode(conf)
 	check(err)

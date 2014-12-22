@@ -15,10 +15,20 @@
 package main
 
 import (
+	"fmt"
 	"github.com/coreos/flannel/pkg/ip"
 	"github.com/vishvananda/netlink"
+	"log"
 	"os"
 )
+
+func initTunDevice(config tomlConfig, server *Server) {
+
+	server.TunFile, server.TunLink = openDevice(config.Server.Device)
+	configureDevice(server.TunLink, config.Server.IPv6, 1312)
+
+	return
+}
 
 // openDevice opens the specified device and sets it to UP status.
 //
@@ -30,10 +40,12 @@ import (
 // - Add closeDevice function
 // - Create our own ip.OpenTun since we dont use much else from github.com/coreos/flannel/pkg/ip
 func openDevice(deviceName string) (*os.File, netlink.Link) {
+	log.Printf("Opening %s", deviceName)
 	dev, ifname, err := ip.OpenTun(deviceName)
 	check(err)
 	tun, err := netlink.LinkByName(ifname)
 	check(err)
+	log.Printf("Bringing %s UP", ifname)
 	err = netlink.LinkSetUp(tun)
 	check(err)
 	return dev, tun
@@ -49,13 +61,16 @@ func configureDevice(tun netlink.Link, ipv6 string, mtu int) {
 //
 // TODO: test behavior when the same address is added twice
 func addDeviceAddress(tun netlink.Link, ipv6 string) {
-	addr, err := netlink.ParseAddr(ipv6)
+	addr, err := netlink.ParseAddr(fmt.Sprintf("%s/8", ipv6))
 	check(err)
+	log.Printf("Assigning %s to %s", ipv6, tun.Attrs().Name)
 	err = netlink.AddrAdd(tun, addr)
 	check(err)
 }
 
 func setDeviceMTU(tun netlink.Link, mtu int) {
+
+	log.Printf("Setting %s MTU to %d", tun.Attrs().Name, mtu)
 	err := netlink.LinkSetMTU(tun, mtu)
 	check(err)
 }
