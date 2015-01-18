@@ -15,25 +15,45 @@
 package main
 
 import (
-	"fmt"
-	"net"
+	_ "fmt"
+	_ "net"
 )
 
-func UDPListen(listenAddress string) (localUDPServer *net.UDPConn) {
-	localAddr, err := net.ResolveUDPAddr("udp", listenAddress)
-	check(err)
-	localUDPServer, err = net.ListenUDP("udp", localAddr)
-	check(err)
-	return localUDPServer
+// func (p *PeerInfo) PublicAddress() *net.IPAddr {
+// 	return p.publicAddress
+// }
+
+// func (p *PeerInfo) CjdnsAddress() *net.IPAddr {
+// 	return p.cjdnsAddress
+// }
+
+// func (p *PeerInfo) Connection() *net.IPConn {
+// 	return p.connection
+// }
+
+func (p *PeerInfo) Connect() error {
+	return nil
 }
 
-func UDPConnect(localServer *net.UDPConn, peerAddress string, key [32]byte, password string) {
-	remoteAddr, err := net.ResolveUDPAddr("udp", peerAddress)
-	check(err)
-	localAddr, err := net.ResolveUDPAddr("udp", localServer.LocalAddr().String())
-	check(err)
-	con, err := net.DialUDP("udp", localAddr, remoteAddr)
-	check(err)
-	fmt.Println(con)
-	con.Close()
+func (p *PeerInfo) Disconnect() error {
+	return nil
 }
+
+// func UDPListen(listenAddress string) (localUDPServer *net.UDPConn) {
+// 	localAddr, err := net.ResolveUDPAddr("udp", listenAddress)
+// 	check(err)
+// 	localUDPServer, err = net.ListenUDP("udp", localAddr)
+// 	check(err)
+// 	return localUDPServer
+// }
+
+// func UDPConnect(localServer *net.UDPConn, peerAddress string, key [32]byte, password string) {
+// 	remoteAddr, err := net.ResolveUDPAddr("udp", peerAddress)
+// 	check(err)
+// 	localAddr, err := net.ResolveUDPAddr("udp", localServer.LocalAddr().String())
+// 	check(err)
+// 	con, err := net.DialUDP("udp", localAddr, remoteAddr)
+// 	check(err)
+// 	fmt.Println(con)
+// 	con.Close()
+// }

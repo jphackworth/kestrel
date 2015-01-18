@@ -2,7 +2,10 @@
 *.o
 *.a
 *.so
-zlarkd
+*.pcap
+*.orig
+*.new
+kestrel
 # Folders
 _obj
 _test

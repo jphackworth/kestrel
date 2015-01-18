@@ -1,0 +1,12 @@
+Software Credits
+The development of this software was made possible using the following components:
+
+govpn by Jay True (Unknown License)
+An OpenVPN clone written in go
+https://github.com/glacjay/govpn
+
+netlink by Vish Ishaya (Apache License 2.0)
+Simple netlink library for go.
+https://github.com/vishvananda
+
+

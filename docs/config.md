@@ -1,15 +1,15 @@
-# Zlarkd Config Files
+# kestrel Config Files
 
 ## Overview
 
-Zlarkd config files are separated into two groups. 
+kestrel config files are separated into two groups. 
 
-/etc/zlarkd/zlarkd.conf (TOML format)
-/etc/zlarkd/peers.json
+/etc/kestrel/kestrel.conf (TOML format)
+/etc/kestrel/peers.json
 
 By separating the files, we can continue to support and interoperate with users of cjdns via the standard json-formatted peer credentials, but move new functionality into the human-readable TOML formatted main config file.
 
-## zlarkd.conf
+## kestrel.conf
 
 This file is [TOML](https://github.com/toml-lang/toml)-formatted.
 
@@ -55,7 +55,7 @@ Other information can be included optionally:
 
 ### Admin section
 
-This section manages the admin RPC interface for zlarkd.
+This section manages the admin RPC interface for kestrel.
 
 TBC
 
@@ -69,7 +69,7 @@ Example:
     enable = true
     level = info
     logger = file # or stderr
-    path = /var/log/zlarkd.log
+    path = /var/log/kestrel.log
 
 ## peers.json
 

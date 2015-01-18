@@ -25,24 +25,24 @@ import (
 	"os"
 )
 
-type tomlConfig struct {
-	Server serverConfig
-}
+// type tomlConfig struct {
+// 	Server serverConfig
+// }
 
-type serverConfig struct {
-	Listen     string `toml:"listen"`
-	Device     string `toml:"device"`
-	PublicKey  string `toml:"public_key"`
-	PrivateKey string `toml:"private_key"`
-	IPv6       string `toml:"ipv6"`
-}
+// type serverConfig struct {
+// 	Listen     string `toml:"listen"`
+// 	Device     string `toml:"device"`
+// 	PublicKey  string `toml:"public_key"`
+// 	PrivateKey string `toml:"private_key"`
+// 	IPv6       string `toml:"ipv6"`
+// }
 
-// getApp is used to configure the command-line defaults, arguments and flags of zlarkd
+// getApp is used to configure the command-line defaults, arguments and flags of kestrel
 //
 // It uses the cli package from https://github.com/codegangsta/cli
 func getApp() *cli.App {
 	app := cli.NewApp()
-	app.Name = "zlarkd"
+	app.Name = "kestrel"
 	app.Usage = "An experimental cjdns router"
 	app.Author = "JPH"
 	app.Email = "jph@hackworth.be"
@@ -60,7 +60,7 @@ func getApp() *cli.App {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "config, c",
-			Value: "/etc/zlarkd/zlarkd.toml",
+			Value: "/etc/kestrel/kestrel.toml",
 			Usage: "Config file location",
 		},
 	}
@@ -68,51 +68,51 @@ func getApp() *cli.App {
 	app.Action = func(c *cli.Context) {
 
 		//config := readConfigFile(c.String("config"))
-		start(c.String("config"))
+		run(c.String("config"))
 		println("hi!")
 	}
 	return app
 }
 
-// Reads the zlarkd config file and decodes into tomlConfig
-func readConfigFile(configPath string) tomlConfig {
+// Reads the kestrel config file and decodes into tomlConfig
+func readConfigFile(configPath string) TomlConfig {
 	configData, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Fatal error %s\n", err)
 		os.Exit(1)
 	}
 
-	var conf tomlConfig
+	var conf TomlConfig
 	_, err = toml.Decode(string(configData), &conf)
 	check(err)
 	return conf
 }
 
-// Checks that the config has the minimum info to start zlarkd:
+// Checks that the config has the minimum info to start kestrel:
 // - public key
 // - private key
 // - valid ipv6
 // - valid listen address
-func validateConfig(config tomlConfig) {
+func validateConfig(config TomlConfig) {
 
 }
 
-// Creates a new zlarkd config and prints to stdout
+// Creates a new kestrel config and prints to stdout
 func generateConfig() {
-	conf := tomlConfig{}
+	conf := TomlConfig{}
 	keys := generateKeys()
 	conf.Server.IPv6 = keys.IPv6.String()
 	conf.Server.PublicKey = fmt.Sprintf("%s.k", base32Encode(keys.PublicKey[:])[:52])
 	conf.Server.PrivateKey = hex.EncodeToString(keys.PrivateKey[:])
 	conf.Server.Listen = generateListenAddress()
-	conf.Server.Device = "tun0"
+	conf.Server.Device = "tun1"
 	buf := new(bytes.Buffer)
 	err := toml.NewEncoder(buf).Encode(conf)
 	check(err)
 	fmt.Println(buf.String())
 }
 
-// Creates a local UDP IPv4 address host:port combination for zlarkd to use
+// Creates a local UDP IPv4 address host:port combination for kestrel to use
 //
 // By default, set to listen on all IPv4 interfaces (0.0.0.0)
 // Will attempt to listen on a random high port temporarily and will assign this if successful.
